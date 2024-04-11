@@ -1,0 +1,24 @@
+{
+  "name": "bilibiliclearplan",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "md5": "^2.3.0",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@arco-design/web-vue": "^2.55.1",
+    "@vitejs/plugin-vue": "^5.0.3",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "vite": "^5.0.11"
+  }
+}
