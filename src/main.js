@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import App from './views/App.vue'
 import router from './router'
 import ArcoVue from '@arco-design/web-vue'
-import '@arco-design/web-vue/dist/style.css'
-import '/styles/tailwindcss.css'
+import './styles/tailwind.css'
+import '@arco-design/web-vue/dist/arco.css'
 
 const app = createApp(App)
 
