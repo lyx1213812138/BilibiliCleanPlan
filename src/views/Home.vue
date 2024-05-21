@@ -1,49 +1,72 @@
 <template>
-  <div class="flex flex-col content-center w-full"> <!-- 内容 -->
-    <div class="w-2/3">aaa</div>
-    <div class="w-2/3">bbb</div>
-      <!-- <a-list
-        :bordered="false"
-        :data="contentData"
-        class="w-2/3"
-      >
-        <template #item="{ item }">
-          <a-list-item action-layout="vertical">
-            <template #actions>
-              <span><icon-heart />83</span>
-              <span><icon-star />{{ item.index }}</span>
-              <span><icon-message />Reply</span>
-            </template>
-            <template #extra>
-              <div className="image-area">
-                <img alt="arco-design" :src="item.imageSrc" />
-              </div>
-            </template>
-            <a-list-item-meta
-              :title="item.title"
-              :description="item.description"
-            >
-              <template #avatar>
-                <a-avatar shape="square">
-                  <img alt="avatar" :src="item.avatar" />
-                </a-avatar>
-              </template>
-            </a-list-item-meta>
-          </a-list-item>
-        </template>
-      </a-list> -->
-    </div>
+  <div class="flex flex-row justify-center m-5">
+    <a-list
+      class="list-demo-action-layout w-1/2"
+      :bordered="false"
+      :data="dataSource"
+      max-height="500px"
+      @reach-bottom="dataSource.push(...dataSource)"
+    >
+      <template #item="{ item }">
+        <a-list-item class="list-demo-item" action-layout="vertical">
+          <template #actions>
+            <span><icon-heart />item.index</span>
+            <span><icon-star />{{ item.index }}</span>
+            <span><icon-message />Reply</span>
+          </template>
+          <template #extra>
+            <div className="image-area">
+              <img alt="arco-design" :src="item.imageSrc" />
+            </div>
+          </template>
+          <a-list-item-meta
+            :title="item.title"
+            :description="item.description"
+          >
+          </a-list-item-meta>
+        </a-list-item>
+      </template>
+    </a-list>
+  </div>
+  
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 import { IconHeart, IconStar, IconMessage } from '@arco-design/web-vue/es/icon';
 
-const contentData = ref([
-  {
-    index: 1,
-    title: "Title 1",
-    description: "Description 1",
-  }
-]);
+const dataSource = ref(new Array(15).fill(null).map((_, index) => {
+  return {
+    index: index
+  };
+}));
 </script>
+
+<style scoped>
+.list-demo-action-layout .image-area {
+  width: 183px;
+  height: 119px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-left: 10px;
+}
+
+.list-demo-action-layout .list-demo-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-fill-3);
+  background-color: var(--color-fill-1);
+  opacity: 0.7;
+}
+
+.list-demo-action-layout .list-demo-item:hover {
+  background-color: var(--color-fill-2);
+}
+
+.list-demo-action-layout .image-area img {
+  width: 100%;
+}
+
+.list-demo-action-layout .arco-list-item-action .arco-icon {
+  margin: 0 4px;
+}
+</style>

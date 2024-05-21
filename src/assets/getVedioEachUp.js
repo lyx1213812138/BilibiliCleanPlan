@@ -29,4 +29,4 @@ function dealToSecond(str) {
   return time[0] * 60 + time[1] * 1;
 }
 
-// test().then(res => console.log(res));
+getVedioEachUp(false, ).then(res => console.log(res));

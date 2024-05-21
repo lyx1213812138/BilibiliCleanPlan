@@ -12,7 +12,7 @@
       mode="horizontal" 
       theme="dark" 
       :default-selected-keys="['home']" 
-      class="opacity-90"
+      class="opacity-80"
       id="menu"
     >
       <a-menu-item key="home">
@@ -30,7 +30,7 @@
 import { ref, computed } from 'vue';
 const maxwidth = ref(window.innerWidth);
 const maxhight = ref(window.innerHeight);
-const backgroundImageUrl = ref('/src/assets/img/background1.png');
+const backgroundImageUrl = ref('/src/assets/img/background2.png');
 </script>
 
 <style>
@@ -47,7 +47,7 @@ const backgroundImageUrl = ref('/src/assets/img/background1.png');
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.7); 
 }
 
 #menu::before { /* title */
