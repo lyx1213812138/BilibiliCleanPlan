@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,7 +31,7 @@ var (
 	lastUpdateTime time.Time
 )
 
-func Get(urlStr string, data any) error {
+func Get(urlStr string, datap any) error {
 	newUrlStr, err := signAndGenerateURL(urlStr)
 	if err != nil {
 		return fmt.Errorf("generate url: %s", err)
@@ -57,11 +58,29 @@ func Get(urlStr string, data any) error {
 	if err != nil {
 		return fmt.Errorf("failed to read response: %s", err)
 	}
-	err = json.Unmarshal(body, data)
+	err = json.Unmarshal(body, datap)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal body: %s", err)
 	}
-	data.(struct{ Code int }).Code = int(gjson.GetBytes(body, "code").Int())
+
+	// check (*datap).code
+	v := reflect.ValueOf(datap).Elem()
+	var code, message reflect.Value
+	switch v.Kind() {
+	case reflect.Struct:
+		code = v.FieldByName("Code")
+		message = v.FieldByName("Message")
+		break
+	case reflect.Map:
+		code = v.MapIndex(reflect.ValueOf("Code"))
+		message = v.MapIndex(reflect.ValueOf("Message"))
+		break
+	default:
+		return fmt.Errorf("unknown type: %s", v.Kind())
+	}
+	if code.Int() != 0 {
+		return fmt.Errorf("code is not 0: %s", message.String())
+	}
 	return nil
 }
 
@@ -179,18 +198,18 @@ func getWbiKeys() (string, string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://api.bilibili.com/x/web-interface/nav", nil)
 	if err != nil {
-		return "", "", fmt.Errorf("Error creating request: %s", err)
+		return "", "", fmt.Errorf("error creating request: %s", err)
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 	req.Header.Set("Referer", "https://www.bilibili.com/")
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", fmt.Errorf("Error sending request: %s", err)
+		return "", "", fmt.Errorf("error sending request: %s", err)
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", fmt.Errorf("Error reading response: %s", err)
+		return "", "", fmt.Errorf("error reading response: %s", err)
 	}
 	json := string(body)
 	imgURL := gjson.Get(json, "data.wbi_img.img_url").String()

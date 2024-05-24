@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	fmt.Println(getSubscriptTags("434100110"))
+	fmt.Println(getSubscriptUpByTag(0))
 }

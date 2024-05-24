@@ -14,9 +14,6 @@ func getSubscriptTags(vmid string) ([]uptag, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error get from %s: %s", url, err)
 	}
-	if jsonData.Code != 0 {
-		return nil, fmt.Errorf("error get from %s: %s", url, jsonData.Message)
-	}
 	return jsonData.Data, nil
 }
 
@@ -26,9 +23,6 @@ func getSubscriptUpByTag(tagid int) ([]up, error) {
 	err := get.Get(url, &jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("error get from %s: %s", url, err)
-	}
-	if jsonData.Code != 0 {
-		return nil, fmt.Errorf("error get from %s: %s", url, jsonData.Message)
 	}
 	return jsonData.Data, nil
 }
