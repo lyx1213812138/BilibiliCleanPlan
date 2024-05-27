@@ -1,4 +1,4 @@
-package main
+package getData
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/lyx1213812138/BilibiliCleanPlan/get"
 )
 
-func getSubscriptTags(vmid string) ([]uptag, error) {
+func getSubscriptTags(vmid string) ([]uptag, error) { // vmid: 434100110
 	url := "https://api.bilibili.com/x/relation/tags?vmid=" + vmid
 	var jsonData tagRespBody
 	err := get.Get(url, &jsonData)
@@ -26,11 +26,3 @@ func getSubscriptUpByTag(tagid int) ([]up, error) {
 	}
 	return jsonData.Data, nil
 }
-
-/*
-特别关注：-10
-短篇休闲：97606352
-知识：97607696
-长篇休闲：97616784
-知识：97607696
-*/

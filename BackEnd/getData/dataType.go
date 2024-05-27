@@ -1,4 +1,4 @@
-package main
+package getData
 
 type respBody struct {
 	Code    int    `json:"code"`
@@ -24,4 +24,9 @@ type uptag struct {
 type up struct {
 	UpID int    `json:"mid"`
 	Name string `json:"uname"`
+}
+
+type detailEachTag struct {
+	TagInfo uptag `json:"taginfo"`
+	UpList  []up  `json:"uplist"`
 }
