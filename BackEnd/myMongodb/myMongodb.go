@@ -1,4 +1,4 @@
-package store
+package myMongodb
 
 import (
 	"context"
@@ -48,4 +48,26 @@ func Insert(colName string, data any) error {
 	}
 
 	return allErr
+}
+
+func Find(colName string, filter interface{}, result interface{}) error {
+	col := Database.Collection(colName)
+	if filter == nil {
+		filter = options.Find()
+	}
+
+	cur, err := col.Find(context.TODO(), filter)
+	if err != nil {
+		return fmt.Errorf("error find data from mongodb: %s", err)
+	}
+	defer cur.Close(context.TODO())
+
+	rv := reflect.ValueOf(result)
+	if rv.Kind() != reflect.Ptr || rv.Elem().Kind() != reflect.Slice {
+		return fmt.Errorf("result is not a pointer to a slice: %s", rv.Kind())
+	}
+
+	cur.All(context.TODO(), result)
+
+	return nil
 }
