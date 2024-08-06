@@ -57,6 +57,7 @@ const backgroundImageUrl = ref('/src/assets/img/background2.png');
   height: 100%;
   font-size: 2.3em; 
   font-weight: 900;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;

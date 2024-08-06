@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-center m-5">
+  <div class="flex flex-row justify-center m-10">
     <a-list
       class="list-demo-action-layout w-1/2"
       :bordered="false"
