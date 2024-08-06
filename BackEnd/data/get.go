@@ -1,5 +1,5 @@
 // get data from api by getData(url, &data)
-package get
+package data
 
 import (
 	"crypto/md5"
@@ -81,9 +81,11 @@ func Get(urlStr string, datap any) error {
 	if code.Int() != 0 {
 		return fmt.Errorf("code is not 0: %s", message.String())
 	}
+	fmt.Println("get data successfully from", newUrlStr)
 	return nil
 }
 
+/* 弃用
 func GetConcur(urls []string, datap [](*any)) error { // 并发获取数据
 	var wg sync.WaitGroup
 	var allErr error
@@ -103,6 +105,7 @@ func GetConcur(urls []string, datap [](*any)) error { // 并发获取数据
 	wg.Wait()
 	return allErr
 }
+*/
 
 func signAndGenerateURL(urlStr string) (string, error) {
 	urlObj, err := url.Parse(urlStr)
