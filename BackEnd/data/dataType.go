@@ -12,6 +12,13 @@ type Vgroup interface {
 	SetLabel(Label)
 }
 
+type VgType int
+
+const (
+	IsSeason VgType = iota
+	IsUp
+)
+
 // up
 type Up struct {
 	UpID  int    `json:"mid"`

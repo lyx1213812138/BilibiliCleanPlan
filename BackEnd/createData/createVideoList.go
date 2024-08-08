@@ -1,5 +1,0 @@
-package createData
-
-func createVList() {
-
-}
