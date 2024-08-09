@@ -12,12 +12,13 @@ import (
 
 var port string = "12121"
 
-func Server() {
+func server() {
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	log.Println("request for url: ", r.URL.Path)
 	// get request
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)

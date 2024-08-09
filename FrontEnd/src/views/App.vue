@@ -28,6 +28,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+
 const maxwidth = ref(window.innerWidth);
 const maxhight = ref(window.innerHeight);
 const backgroundImageUrl = ref('/src/assets/img/background2.png');
