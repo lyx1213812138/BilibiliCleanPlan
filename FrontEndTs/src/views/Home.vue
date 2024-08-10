@@ -5,7 +5,7 @@
       :bordered="false"
       :data="dataSource"
       max-height="500px"
-      @reach-bottom="dataSource.push(...dataSource)"
+      @reach-bottom="dataSource?.push(...dataSource)"
     >
       <template #item="{ item }">
         <a-list-item class="list-demo-item" action-layout="vertical" @click="clickVideo(item.bvid)">
@@ -33,8 +33,10 @@ import { IconHeart } from '@arco-design/web-vue/es/icon';
 import { tmpVideo, Video } from '@/types/apiType';
 import { getVideo } from '@/utils/getData';
 
-const dataSource = ref<Video[]>();
-
+const dataSource = ref<Video[]>([]);
+getVideo({list: []}).then((res) => {
+  dataSource.value = res;
+});
 
 const clickVideo = (bvid: string) => {
   window.open(`https://www.bilibili.com/video/${bvid}`);

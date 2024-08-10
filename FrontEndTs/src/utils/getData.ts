@@ -4,11 +4,8 @@ import { RequestMessage, Video } from '@/types/apiType';
 
 const url = 'http://localhost:12121';
 
-export function getVideo(data: RequestMessage) {
-  // 用axios发送请求
+export const getVideo = async (data: RequestMessage) => {
   const str = JSON.stringify(data);
-  axios.post(url, str).then((res) => {
-    const data: Video[] = JSON.parse(res.data);
-    console.log("responce: ", data);
-  });
+  const videos: Video[] = JSON.parse((await axios.post(url, str)).data);
+  return videos;
 }

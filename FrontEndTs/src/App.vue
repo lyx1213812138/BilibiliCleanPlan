@@ -12,27 +12,34 @@
     <a-menu 
       mode="horizontal" 
       theme="dark" 
-      :default-selected-keys="['home']" 
+      :selected-keys="path"
       class="opacity-60"
       id="menu"
     >
-      <a-menu-item key="home">
+      <a-menu-item key="/">
         <router-link to="/">Home</router-link>
       </a-menu-item>
-      <a-menu-item key="category">
-        <router-link to="/category">Category</router-link>
+      <a-menu-item key="/select">
+        <router-link to="/select">Select</router-link>
       </a-menu-item>
     </a-menu>
     <router-view />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { watch } from 'vue';
 import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const maxwidth = ref(window.innerWidth);
 const maxhight = ref(window.innerHeight);
+const router = useRouter();
+const path = ref([router.currentRoute.value.path]); // 加上[]失去了响应式
+watch(() => router.currentRoute.value.path, (newPath) => {
+  path.value = [newPath];
+});
 
 const backgroundImageUrl = ref('/src/assets/img/background2.png');
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <h1>Category</h1>
-  <p>Category page content</p>
+  <h1>Select</h1>
+  <p>Select page content</p>
 </template>
 
 <script setup lang="ts">
