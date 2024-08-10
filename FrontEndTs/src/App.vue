@@ -1,4 +1,5 @@
 <template>
+  <!-- container of all, for background img-->
   <div
     :style="{
       backgroundImage: `url(${backgroundImageUrl})`,
@@ -6,12 +7,13 @@
     }"
     class="bg-cover w-full"
     id="container"
-  > <!-- container of all, for background img-->
+  > 
+    <!-- topbar -->
     <a-menu 
       mode="horizontal" 
       theme="dark" 
       :default-selected-keys="['home']" 
-      class="opacity-80"
+      class="opacity-60"
       id="menu"
     >
       <a-menu-item key="home">

@@ -8,38 +8,41 @@
       @reach-bottom="dataSource.push(...dataSource)"
     >
       <template #item="{ item }">
-        <a-list-item class="list-demo-item" action-layout="vertical">
+        <a-list-item class="list-demo-item" action-layout="vertical" @click="clickVideo(item.bvid)">
+          <a-list-item-meta
+            :title="item.title"
+          >
+          </a-list-item-meta>
           <template #actions>
-            <span><icon-heart />item.index</span>
-            <span><icon-star />{{ item.index }}</span>
-            <span><icon-message />Reply</span>
+            <span @click="clickUp(item.mid)"><icon-heart />{{ item.up_name }}</span>
           </template>
           <template #extra>
             <div className="image-area">
-              <img alt="arco-design" :src="item.imageSrc" />
+              <img alt="pic" :src="item.pic" />
             </div>
           </template>
-          <a-list-item-meta
-            :title="item.title"
-            :description="item.description"
-          >
-          </a-list-item-meta>
         </a-list-item>
       </template>
     </a-list>
   </div>
-  
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
-import { IconHeart, IconStar, IconMessage } from '@arco-design/web-vue/es/icon';
+import { IconHeart } from '@arco-design/web-vue/es/icon';
+import { tmpVideo, Video } from '@/types/apiType';
+import { getVideo } from '@/utils/getData';
 
-const dataSource = ref(new Array(15).fill(null).map((_, index) => {
-  return {
-    index: index
-  };
-}));
+const dataSource = ref<Video[]>();
+
+
+const clickVideo = (bvid: string) => {
+  window.open(`https://www.bilibili.com/video/${bvid}`);
+};
+
+const clickUp = (mid: number) => {
+  window.open(`https://space.bilibili.com/${mid}`);
+};
 </script>
 
 <style>
@@ -62,11 +65,22 @@ const dataSource = ref(new Array(15).fill(null).map((_, index) => {
   background-color: var(--color-fill-2);
 }
 
+.list-demo-action-layout .list-demo-item:active {
+  background-color: var(--color-fill-3);
+}
+
 .list-demo-action-layout .image-area img {
   width: 100%;
 }
 
 .list-demo-action-layout .arco-list-item-action .arco-icon {
-  margin: 0 4px;
+  margin-right: 4px;
 }
+
+.arco-list-item-meta-title {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+
 </style>
