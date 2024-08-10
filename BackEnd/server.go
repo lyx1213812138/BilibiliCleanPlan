@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/lyx1213812138/BilibiliCleanPlan/data"
+	"github.com/lyx1213812138/BilibiliCleanPlan/myMongodb"
 	"github.com/lyx1213812138/BilibiliCleanPlan/recommend"
 )
 
@@ -20,7 +21,7 @@ func server() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	log.Println("request for url: ", r.URL.Path)
 	// get request
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -30,28 +31,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	req := new(req)
-	err = json.Unmarshal(b, req)
+
+	// make vgroup
+	var req req
+	var vg []data.Vgroup
+	err = json.Unmarshal(b, &req)
 	if err != nil {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		log.Printf("error unmarshal body: %s\nfind all\n", err)
+		vg, err = myMongodb.GetAllVgroup()
+	} else if len(req.List) == 0 {
+		log.Println("no data\nfind all")
+		vg, err = myMongodb.GetAllVgroup()
+	} else {
+		// log.Printf("request data: %#v\n", req)
+		vg = reqToVg(req)
+	}
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("error get all vgroup from mongodb: ", err)
 		return
 	}
 
-	// make data
-	var vg []data.Vgroup
-	for _, ele := range req.List {
-		switch ele.Type {
-		case data.IsSeason:
-			vg = append(vg, &data.Season{
-				UpID:     ele.UpId,
-				SeasonID: ele.SeasonId,
-			})
-		case data.IsUp:
-			vg = append(vg, &data.Up{
-				UpID: ele.UpId,
-			})
-		}
-	}
 	vs, err := recommend.RecommondList(vg)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -65,7 +65,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	// response
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(b)
+}
+
+func reqToVg(req req) (vg []data.Vgroup) {
+	for _, ele := range req.List {
+		switch ele.Type {
+		case data.IsSeason:
+			vg = append(vg, &data.Season{
+				UpID:     ele.UpId,
+				SeasonID: ele.SeasonId,
+				Label:    ele.Label,
+			})
+		case data.IsUp:
+			vg = append(vg, &data.Up{
+				UpID:  ele.UpId,
+				Label: ele.Label,
+			})
+		}
+	}
+	return
 }
 
 type req struct {
@@ -76,4 +96,5 @@ type reqEle struct {
 	Type     data.VgType `json:"type"`
 	UpId     int         `json:"mid"`
 	SeasonId int         `json:"sid"`
+	Label    data.Label  `json:"label"`
 }

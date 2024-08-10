@@ -100,7 +100,7 @@ func GetVideoByVg(vg []data.Vgroup) ([]data.Video, error) {
 			mu.Lock()
 			videos = append(videos, video...)
 			mu.Unlock()
-			// fmt.Println(len(video))
+			// fmt.Println("len video(utilFromDb) ", len(video))
 		}(v)
 	}
 	wg.Wait()

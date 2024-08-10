@@ -39,6 +39,8 @@ func (u Up) GetVideo() ([]Video, error) {
 	listp := &jsonData.Data.List.Vlist
 	for i := range *listp {
 		(*listp)[i].Label = u.Label
+		(*listp)[i].UpId = u.UpID
+		(*listp)[i].UpName = u.Name
 	}
 	return *listp, nil
 }
@@ -79,6 +81,8 @@ func (s *Season) GetVideo() ([]Video, error) {
 			Pic:     sv.Pic,
 			LengthS: sv.LengthS,
 			Label:   s.Label,
+			UpId:    s.UpID,
+			UpName:  s.Name,
 		})
 	}
 
@@ -114,12 +118,12 @@ type Video struct {
 	Pic       string `json:"pic"`
 	Label     Label
 	Seen      bool
+	UpId      int    `json:"mid"`
+	UpName    string `json:"up_name"`
 }
 
 func (v *Video) Length() int { // return length in second
-	if v.LengthStr == "" {
-		return v.LengthS
-	} else {
+	if v.LengthS == 0 {
 		t := strings.Split(v.LengthStr, ":")
 		if len(t) != 2 {
 			return -1
@@ -129,6 +133,7 @@ func (v *Video) Length() int { // return length in second
 		if err != nil || err2 != nil {
 			return -1
 		}
-		return 60*i1 + i2
+		v.LengthS = 60*i1 + i2
 	}
+	return v.LengthS
 }
