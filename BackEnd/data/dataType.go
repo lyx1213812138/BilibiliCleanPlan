@@ -1,6 +1,7 @@
 package data
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ type Vgroup interface {
 	GetVideo() ([]Video, error)
 	GetLabel() Label
 	SetLabel(Label)
+	GetStr() (string, error)
 }
 
 type VgType int
@@ -24,6 +26,7 @@ type Up struct {
 	UpID  int    `json:"mid"`
 	Name  string `json:"uname"`
 	Label Label  `json:"label"`
+	Type  VgType `json:"type"`
 }
 
 func (u Up) GetVideo() ([]Video, error) {
@@ -37,7 +40,7 @@ func (u Up) GetVideo() ([]Video, error) {
 	}
 
 	listp := &jsonData.Data.List.Vlist
-	for i := range *listp {
+	for i := range *listp { // 注意 for range 会复制元素
 		(*listp)[i].Label = u.Label
 		(*listp)[i].UpId = u.UpID
 		(*listp)[i].UpName = u.Name
@@ -53,12 +56,18 @@ func (u *Up) SetLabel(l Label) {
 	u.Label = l
 }
 
+func (u *Up) GetStr() (string, error) {
+	b, e := json.Marshal(*u)
+	return string(b), e
+}
+
 // season
 type Season struct {
 	UpID     int    `json:"mid"`
 	SeasonID int    `json:"id"`
 	Name     string `json:"title"`
 	Label    Label
+	Type     VgType `json:"type"`
 }
 
 func (s *Season) GetVideo() ([]Video, error) {
@@ -95,6 +104,11 @@ func (s *Season) GetLabel() Label {
 
 func (s *Season) SetLabel(l Label) {
 	s.Label = l
+}
+
+func (u *Season) GetStr() (string, error) {
+	b, e := json.Marshal(*u)
+	return string(b), e
 }
 
 // label

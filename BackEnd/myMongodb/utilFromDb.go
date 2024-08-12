@@ -52,7 +52,7 @@ func RmSameUps() {
 
 /* 添加标签 */
 func AddLabel() {
-	err := Insert("Ups", []data.Up{{405054588, "TED精选演讲", 4}})
+	err := Insert("Ups", []data.Up{{}})
 	if err != nil {
 		panic(err)
 	}
@@ -73,9 +73,11 @@ func GetAllVgroup() ([]data.Vgroup, error) {
 	}
 	// merge ups and seasons into vgroups
 	for _, v := range ups {
+		v.Type = data.IsUp
 		vgroups = append(vgroups, data.Vgroup(&v))
 	}
 	for _, v := range seasons {
+		v.Type = data.IsSeason
 		vgroups = append(vgroups, data.Vgroup(&v))
 	}
 	return vgroups, nil

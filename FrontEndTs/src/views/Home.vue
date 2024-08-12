@@ -21,22 +21,19 @@
               <img alt="pic" :src="item.pic" />
             </div>
           </template>
-        </a-list-item>
+      </a-list-item>
       </template>
     </a-list>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { IconHeart } from '@arco-design/web-vue/es/icon';
-import { tmpVideo, Video } from '@/types/apiType';
+import { tmpVideo, Vgroup, Video } from '@/types/apiType';
 import { getVideo } from '@/utils/getData';
 
 const dataSource = ref<Video[]>([]);
-getVideo({list: []}).then((res) => {
-  dataSource.value = res;
-});
 
 const clickVideo = (bvid: string) => {
   window.open(`https://www.bilibili.com/video/${bvid}`);
@@ -45,6 +42,16 @@ const clickVideo = (bvid: string) => {
 const clickUp = (mid: number) => {
   window.open(`https://space.bilibili.com/${mid}`);
 };
+
+onMounted(() => {
+  const vg: Vgroup[] = localStorage.getItem('selectedVgroup') ? JSON.parse(localStorage.getItem('selectedVgroup')!) : [];
+  console.log('%c [ vg ]-48', 'font-size:13px; background:#4337fe; color:#877bff;', vg);
+  // TODO： type
+
+  getVideo({list: vg}).then((res) => {
+    dataSource.value = res;
+  });
+});
 </script>
 
 <style>

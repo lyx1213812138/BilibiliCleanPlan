@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,11 +15,13 @@ import (
 var port string = "12121"
 
 func server() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/getvideo", handlerVideo)
+	http.HandleFunc("/allvgroup", handlerVg)
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+// /getvideo
+func handlerVideo(w http.ResponseWriter, r *http.Request) {
 	log.Println("request for url: ", r.URL.Path)
 	// get request
 	if r.Method != http.MethodPost {
@@ -70,6 +73,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func reqToVg(req req) (vg []data.Vgroup) {
+	// fmt.Printf("req: %#v\n", req)
 	for _, ele := range req.List {
 		switch ele.Type {
 		case data.IsSeason:
@@ -97,4 +101,41 @@ type reqEle struct {
 	UpId     int         `json:"mid"`
 	SeasonId int         `json:"sid"`
 	Label    data.Label  `json:"label"`
+}
+
+// /allvgroup
+func handlerVg(w http.ResponseWriter, r *http.Request) {
+	log.Println("request for url: ", r.URL.Path)
+	// get request
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	vg, err := myMongodb.GetAllVgroup()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("error get all vgroup from mongodb: ", err)
+		return
+	}
+	var res string = "["
+	// JSON解析器在解析时会忽略空白字符，包括空格、制表符、换行符等。
+	for _, v := range vg {
+		s, err := v.GetStr()
+		if err != nil {
+			fmt.Println("error get string from one vgroup: ", err)
+			continue
+		}
+		res += s + ","
+	}
+	// remove last ',' to ']'
+	if len(res) > 1 {
+		res = res[:len(res)-1]
+		res += "]"
+	}
+
+	// response
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Write([]byte(res))
 }

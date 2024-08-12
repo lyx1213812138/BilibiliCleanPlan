@@ -1,7 +1,8 @@
 interface Vgroup {
   type: VgType;
   mid: number;
-  up_name: string;
+  uname?: string; // up name
+  title?: string; // season title
   sid?: number;
   label: number; // 注意带上 label
 }
@@ -27,14 +28,14 @@ const tmpReq: RequestMessage = {
   list: [
     {
       type: VgType.IsSeason,
-      up_name: 'up_name',
+      title: 'season title',
       mid: 439465191,
       sid: 1954425,
       label: 4
     },
     {
       type: VgType.IsUp,
-      up_name: 'up_name',
+      uname: 'up_name',
       mid: 8014168,
       label: 4
     }
