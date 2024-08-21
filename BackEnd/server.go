@@ -17,6 +17,7 @@ var port string = "12121"
 func server() {
 	http.HandleFunc("/getvideo", handlerVideo)
 	http.HandleFunc("/allvgroup", handlerVg)
+	http.Handle("/", http.FileServer(http.Dir("./static")))
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
 

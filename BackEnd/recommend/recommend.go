@@ -45,7 +45,7 @@ func RecommondList(vg []data.Vgroup) ([]data.Video, error) {
 		}
 	}
 	sort.Sort(res)
-	fmt.Println("allres: ", res)
+	// fmt.Println("allres: ", res)
 	return res[:min(numRecommond, len(res))], nil
 }
 

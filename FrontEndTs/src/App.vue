@@ -41,7 +41,7 @@ watch(() => router.currentRoute.value.path, (newPath) => {
   path.value = [newPath];
 });
 
-const backgroundImageUrl = ref('/src/assets/img/background2.png');
+const backgroundImageUrl = ref('/background2.png');
 </script>
 
 <style>
