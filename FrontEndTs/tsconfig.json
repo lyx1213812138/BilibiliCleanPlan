@@ -3,5 +3,7 @@
     "paths": {
       "@/*": ["./src/*"],
     }
-  }
+  },
+  "extends": "./tsconfig.node.json"
+  // 如果 tsconfig.json 文件中有一个 extends 属性，它将指向另一个配置文件。你可以按照这个路径找到基础配置文件。
 }
