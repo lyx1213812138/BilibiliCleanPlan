@@ -1,4 +1,4 @@
-// get data from api by getData(url, &data)
+// get data from api by Get(url, &data)
 package data
 
 import (
@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -17,6 +16,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
@@ -31,6 +31,7 @@ var (
 	lastUpdateTime time.Time
 )
 
+// get bilibili api
 func Get(urlStr string, datap any) error {
 	newUrlStr, err := signAndGenerateURL(urlStr)
 	if err != nil {
@@ -43,12 +44,7 @@ func Get(urlStr string, datap any) error {
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 	req.Header.Set("Referer", "https://www.bilibili.com/")
 
-	// get cookie
-	cookie, err := os.ReadFile("./myCookie.txt")
-	if err != nil {
-		return fmt.Errorf("open cookie file failed: %s", err)
-	}
-	req.Header.Set("cookie", string(cookie))
+	req.Header.Set("cookie", viper.GetString("cookie"))
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {

@@ -31,7 +31,7 @@ type VideoRespBodyIn2 struct {
 }
 
 type Uptag struct {
-	Tagid int    `json:"tagid"`
+	Id    int    `json:"tagid"`
 	Name  string `json:"name"`
 	Count int    `json:"count"`
 }

@@ -1,20 +1,19 @@
 package handleData
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/lyx1213812138/BilibiliCleanPlan/data"
-	"github.com/lyx1213812138/BilibiliCleanPlan/myMongodb"
+	dbsql "github.com/lyx1213812138/BilibiliCleanPlan/dbSql"
 )
 
 func Label() {
 	ups := []data.Up{}
-	err := myMongodb.Find("Ups", nil, &ups)
+	err := dbsql.Db.Find(&ups).Error
 	if err != nil {
 		panic(err)
 	}
-	for upid, _ := range ups {
+	for upid := range ups {
 		upPtr := &ups[upid]
 		if (*upPtr).Label == data.NoLab {
 			fmt.Printf("UpID: %d, Name: %s, Label: %d\n", (*upPtr).UpID, (*upPtr).Name, (*upPtr).Label)
@@ -35,8 +34,7 @@ func Label() {
 	if save != "y" {
 		return
 	}
-	myMongodb.Database.Collection("Ups").Drop(context.TODO())
-	err = myMongodb.Insert("Ups", ups)
+	err = dbsql.Db.Save(&ups).Error
 	if err != nil {
 		panic(fmt.Errorf("error insert data to mongodb: %s", err))
 	} else {

@@ -1,15 +1,12 @@
 package recommend
 
 import (
-	"fmt"
+	"log"
 	"sort"
 
 	"github.com/lyx1213812138/BilibiliCleanPlan/data"
-	"github.com/lyx1213812138/BilibiliCleanPlan/myMongodb"
-)
-
-const (
-	numRecommond = 20
+	dbsql "github.com/lyx1213812138/BilibiliCleanPlan/dbSql"
+	"github.com/spf13/viper"
 )
 
 type VideoSlice []data.Video
@@ -33,14 +30,25 @@ func (vs VideoSlice) Swap(i, j int) {
 }
 
 func RecommondList(vg []data.Vgroup) ([]data.Video, error) {
+	numRecommond := viper.GetInt("recommend.num")
+	LimitOfEachVg := max(3, numRecommond/len(vg)*2)
 	// TODO: 查找已看过视频
-	allVs, err := myMongodb.GetVideoByVg(vg)
-	if err != nil {
-		return nil, fmt.Errorf("error get video by vgroup: %s", err)
+
+	// fliter vg
+	var allVs []data.Video
+	for _, v := range vg {
+		var vs []data.Video
+		err := dbsql.Db.Where("up_id = ?", v.GetUpID()).Limit(LimitOfEachVg).Find(&vs).Error
+		if err != nil {
+			log.Printf("error get video by up: %s\n", err)
+		}
+		allVs = append(allVs, vs...)
 	}
+
+	// fliter seen
 	res := VideoSlice{}
 	for _, v := range allVs {
-		if !v.Seen {
+		if !dbsql.IfSeen(v.Bvid) {
 			res = append(res, v)
 		}
 	}

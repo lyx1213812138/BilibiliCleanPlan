@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/lyx1213812138/BilibiliCleanPlan/data"
-	"github.com/lyx1213812138/BilibiliCleanPlan/myMongodb"
+	"github.com/lyx1213812138/BilibiliCleanPlan/dbSql"
 	"github.com/lyx1213812138/BilibiliCleanPlan/recommend"
 )
 
@@ -18,6 +18,7 @@ func server() {
 	http.HandleFunc("/getvideo", handlerVideo)
 	http.HandleFunc("/allvgroup", handlerVg)
 	http.Handle("/", http.FileServer(http.Dir("./static")))
+	log.Printf("server start at localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
 
@@ -42,10 +43,10 @@ func handlerVideo(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(b, &req)
 	if err != nil {
 		log.Printf("error unmarshal body: %s\nfind all\n", err)
-		vg, err = myMongodb.GetAllVgroup()
+		vg, err = dbsql.AllVg()
 	} else if len(req.List) == 0 {
 		log.Println("no data\nfind all")
-		vg, err = myMongodb.GetAllVgroup()
+		vg, err = dbsql.AllVg()
 	} else {
 		// log.Printf("request data: %#v\n", req)
 		vg = reqToVg(req)
@@ -113,7 +114,7 @@ func handlerVg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vg, err := myMongodb.GetAllVgroup()
+	vg, err := dbsql.AllVg()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Println("error get all vgroup from mongodb: ", err)
