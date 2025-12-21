@@ -39,25 +39,24 @@ func Get(urlStr string, datap any) error {
 	}
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
-		return fmt.Errorf("new request: %s", err)
+		return fmt.Errorf("error new request: %s", err)
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 	req.Header.Set("Referer", "https://www.bilibili.com/")
-
 	req.Header.Set("cookie", viper.GetString("cookie"))
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %s", err)
+		return fmt.Errorf("request failed: %s, url: %s", err, newUrlStr)
 	}
 	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return fmt.Errorf("failed to read response: %s", err)
+		return fmt.Errorf("failed to read response: %s, url: %s", err, newUrlStr)
 	}
 	err = json.Unmarshal(body, datap)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal body: %s", err)
+		return fmt.Errorf("failed to unmarshal body: %s, url: %s", err, newUrlStr)
 	}
 
 	// check (*datap).code
@@ -76,7 +75,7 @@ func Get(urlStr string, datap any) error {
 		return fmt.Errorf("unknown type: %s", v.Kind())
 	}
 	if code.Int() != 0 {
-		return fmt.Errorf("code is not 0: %s", message.String())
+		return fmt.Errorf("code is not 0: %s, url: %s", message.String(), newUrlStr)
 	}
 	fmt.Println("get data successfully from", newUrlStr)
 	return nil

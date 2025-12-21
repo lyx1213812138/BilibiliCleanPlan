@@ -7,15 +7,16 @@ import (
 
 // video
 type Video struct {
-	Bvid      string `json:"bvid" gorm:"primaryKey;type:char(12)"` // 主键
-	Title     string `json:"title"`
-	View      int    `json:"play"`
-	LengthStr string `json:"length"` // don't use => Length()
-	LengthS   int    // don't use => Length()
-	Pic       string `json:"pic"`
-	Label     Label
-	UpId      int    `json:"mid"`
-	UpName    string `json:"up_name"`
+	Bvid       string `json:"bvid" gorm:"primaryKey;type:char(12)"` // 主键
+	Title      string `json:"title"`
+	View       int    `json:"play"`
+	LengthStr  string `json:"length"` // don't use => Length()
+	LengthS    int    // don't use => Length()
+	Pic        string `json:"pic"`
+	Label      Label
+	UpId       int    `json:"mid"`
+	UpName     string `json:"up_name"`
+	CreateTime int    `json:"created"`
 }
 
 func (v *Video) Length() int { // return length in second

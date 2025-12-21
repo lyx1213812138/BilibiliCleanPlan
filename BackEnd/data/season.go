@@ -21,7 +21,7 @@ func (s *Season) GetVideo() ([]Video, error) {
 	var jsonData SeasonRespBody
 	err := Get(url, &jsonData)
 	if err != nil {
-		return nil, fmt.Errorf("error get from %s: %s", url, err)
+		return nil, fmt.Errorf("error get from season video: %s", err)
 	}
 
 	s.Name = jsonData.Data.Meta.Name

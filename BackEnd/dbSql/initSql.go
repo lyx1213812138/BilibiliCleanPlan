@@ -1,4 +1,4 @@
-package dbsql
+package dbSql
 
 import (
 	"fmt"
@@ -16,6 +16,7 @@ func InitSql() error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %v", err)
 	}
+	Db.Logger = Db.Logger.LogMode(1)
 	Db.AutoMigrate(&data.Up{})
 	Db.AutoMigrate(&data.Video{})
 	Db.AutoMigrate(&data.Season{})

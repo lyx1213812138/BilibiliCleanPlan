@@ -14,6 +14,7 @@ enum VgType {
 
 interface RequestMessage {
   list: Vgroup[];
+  search?: string;
 }
 
 interface Video {

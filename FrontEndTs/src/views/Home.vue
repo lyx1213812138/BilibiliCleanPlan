@@ -32,6 +32,7 @@ import { onMounted, ref } from 'vue';
 import { IconHeart } from '@arco-design/web-vue/es/icon';
 import { tmpVideo, Vgroup, Video } from '@/types/apiType';
 import { getVideo } from '@/utils/getData';
+import emitter from '@/utils/mitt';
 
 const dataSource = ref<Video[]>([]);
 
@@ -43,15 +44,18 @@ const clickUp = (mid: number) => {
   window.open(`https://space.bilibili.com/${mid}`);
 };
 
-onMounted(() => {
+const get = (search="") => {
   const vg: Vgroup[] = localStorage.getItem('selectedVgroup') ? JSON.parse(localStorage.getItem('selectedVgroup')!) : [];
-  console.log('%c [ vg ]-48', 'font-size:13px; background:#4337fe; color:#877bff;', vg);
   // TODO： type
 
-  getVideo({list: vg}).then((res) => {
+  getVideo({list: vg, search: search}).then((res) => {
     dataSource.value = res;
   });
-});
+};
+
+onMounted(get);
+emitter.on('updataVideo', get);
+
 </script>
 
 <style>

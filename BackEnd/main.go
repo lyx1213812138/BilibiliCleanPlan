@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/lyx1213812138/BilibiliCleanPlan/data"
 	dbsql "github.com/lyx1213812138/BilibiliCleanPlan/dbSql"
+	"github.com/lyx1213812138/BilibiliCleanPlan/get"
 	"github.com/spf13/viper"
 )
 
@@ -18,9 +18,25 @@ func main() {
 		log.Fatalf("Error reading config file, %s", err)
 	}
 	config := viper.AllSettings()
-	data.SetMyVmid(config["user_id"].(float64))
+	get.SetMyVmid(config["user_id"].(float64))
 
-	dbsql.InitSql()
-	// update data from api
+	// init sql
+	if err := dbsql.InitSql(); err != nil {
+		log.Fatalf("init sql fail: %v", err)
+	}
+
+	// update database
+	err = get.GetAndStoreHistory()
+	if err != nil {
+		log.Fatalf("get and store history fail: %v", err)
+	}
+	go func() { // TODO: db lock?
+		err := get.StoreAllVideo()
+		if err != nil {
+			log.Fatalf("get and store video fail: %v", err)
+		} else {
+			log.Println("store all video success")
+		}
+	}()
 	server()
 }

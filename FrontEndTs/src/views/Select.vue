@@ -32,7 +32,6 @@ const selected = ref(
 
 const getTransferData = async () => {
   vg = await allVgroup();
-  // const vg = tmpReq.list;
   data.value = vg
   .sort((a, b) => b.label - a.label)
   .map((item) => {
@@ -44,8 +43,6 @@ const getTransferData = async () => {
 };
 
 const selectedVgroup = computed(() => {
-  console.log('%c [ vg ]-47', 'font-size:13px; background:#09a78a; color:#4debce;', selected.value);
-  
   return selected.value.map((item) => {
     return vg.find((v) => v.mid === item);
   });

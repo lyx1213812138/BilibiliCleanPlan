@@ -9,6 +9,10 @@ const pathAllVgroup = '/allvgroup';
 export const getVideo = async (data: RequestMessage) => {
   const str = JSON.stringify(data);
   const resp = await axios.post(url + pathGetVideo, str);
+  if (resp.status !== 200) {
+    console.log('getVideo error', resp);
+    return [];
+  }
   if (typeof resp === 'object' && typeof resp.data === 'object') {
     const videos: Video[] = resp.data;
     return videos;
@@ -23,5 +27,12 @@ export const allVgroup = async () => {
     return resp.data as Vgroup[];
   } else {
     return [];
+  }
+}
+
+export const handleRefresh = async () => {
+  const resp = await axios.get(url + '/refresh');
+  if (resp.status !== 200) {
+    console.log('handleRefresh error', resp);
   }
 }

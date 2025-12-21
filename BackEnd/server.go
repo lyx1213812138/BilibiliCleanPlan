@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/lyx1213812138/BilibiliCleanPlan/data"
-	"github.com/lyx1213812138/BilibiliCleanPlan/dbSql"
+	"github.com/lyx1213812138/BilibiliCleanPlan/get"
 	"github.com/lyx1213812138/BilibiliCleanPlan/recommend"
 )
 
@@ -17,12 +17,15 @@ var port string = "12121"
 func server() {
 	http.HandleFunc("/getvideo", handlerVideo)
 	http.HandleFunc("/allvgroup", handlerVg)
+	http.HandleFunc("/refresh", handlerRefresh)
 	http.Handle("/", http.FileServer(http.Dir("./static")))
 	log.Printf("server start at localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
 
 // /getvideo
+// cookie search = "" : recommend; else : search
+
 func handlerVideo(w http.ResponseWriter, r *http.Request) {
 	log.Println("request for url: ", r.URL.Path)
 	// get request
@@ -40,16 +43,19 @@ func handlerVideo(w http.ResponseWriter, r *http.Request) {
 	// make vgroup
 	var req req
 	var vg []data.Vgroup
+	var search string
 	err = json.Unmarshal(b, &req)
 	if err != nil {
 		log.Printf("error unmarshal body: %s\nfind all\n", err)
-		vg, err = dbsql.AllVg()
+		vg, err = get.AllVg()
 	} else if len(req.List) == 0 {
-		log.Println("no data\nfind all")
-		vg, err = dbsql.AllVg()
+		log.Println("no data find all")
+		vg, err = get.AllVg()
+		search = req.Search
 	} else {
 		// log.Printf("request data: %#v\n", req)
 		vg = reqToVg(req)
+		search = req.Search
 	}
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -57,7 +63,13 @@ func handlerVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vs, err := recommend.RecommondList(vg)
+	// get recommend list
+	var vs []data.Video
+	if search == "" {
+		vs, err = recommend.RecommondList(vg)
+	} else {
+		vs, err = recommend.SearchList(vg, search)
+	}
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -95,7 +107,8 @@ func reqToVg(req req) (vg []data.Vgroup) {
 }
 
 type req struct {
-	List []reqEle `json:"list"`
+	List   []reqEle `json:"list"`
+	Search string   `json:"search"`
 }
 
 type reqEle struct {
@@ -114,7 +127,7 @@ func handlerVg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vg, err := dbsql.AllVg()
+	vg, err := get.AllVg()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Println("error get all vgroup from mongodb: ", err)
@@ -140,4 +153,15 @@ func handlerVg(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write([]byte(res))
+}
+
+func handlerRefresh(w http.ResponseWriter, r *http.Request) {
+	err := get.StoreAllVideo()
+	if err != nil {
+		log.Fatalf("get and store video fail: %v", err)
+	}
+	err = get.GetAndStoreHistory()
+	if err != nil {
+		log.Fatalf("get and store history fail: %v", err)
+	}
 }
